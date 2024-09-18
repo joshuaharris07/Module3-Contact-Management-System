@@ -171,7 +171,7 @@ contact_list = {"9999999999": {"name": "John Doe", "phone": "9999999999", "email
 
 print("Welcome to the Contact Managements System!")
 while True:
-    menu_action = input("""\nMenu\n
+    menu_action = input(f"""\n{"Menu".center(20, "*")}\n
 1. Add a new contact
 2. Edit an existing contact
 3. Delete a contact
