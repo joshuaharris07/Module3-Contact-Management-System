@@ -4,19 +4,17 @@ import os
 def add_contact(contact_list):
     while True:
         phone_entry = input("Please enter the 10 digit phone number: ")
-        try:
-            if validate_phone(phone_entry):
-                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use
-            else:
-                print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
-                break
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        if not validate_phone(phone_entry):
             break
+        else:
+            phone = validate_phone(phone_entry)
         if phone in contact_list:
             print(f"That phone number is already associated with {contact_list[phone]["name"]} in your contacts. Returning to the menu.")
             break
         name = input("Please enter the name of the new contact: ")
+        if name.strip() == "":
+            print("No name was entered, returning to the main menu.")
+            break
         email = input("Please enter their email address: ")
         try:
             if validate_email(email):
@@ -27,7 +25,7 @@ def add_contact(contact_list):
         except Exception as e:
             print(f"An error occurred: {e}")
             break
-        address = input("Please enter their full address: ")
+        address = input("Please enter their address (optional): ")
         contact_to_add = {"name": name, "phone": phone, "email": email, "address": address}
         try: 
             contact_list[phone] = contact_to_add
@@ -41,15 +39,10 @@ def add_contact(contact_list):
 def edit_contact(contact_list):
     while True:
         phone_entry = input("Please enter the 10 digit phone number: ")
-        try:
-            if validate_phone(phone_entry):
-                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use and clear additional symbols.
-            else:
-                print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
-                break
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        if not validate_phone(phone_entry):
             break
+        else:
+            phone = validate_phone(phone_entry)
         if phone not in contact_list:
                 print(f"That phone number is not currently in your contacts. Returning to the menu.")
                 break
@@ -78,22 +71,18 @@ def edit_contact(contact_list):
             print(f"The address has successfully been changed to: {address_change}\nReturning to the menu.")
             break
         elif action == "4":
-            delete_contact()
+            delete_contact(contact_list)
+            break
         else:
             print("That is not a valid selection.")
 
 def delete_contact(contact_list):
     while True:
         phone_entry = input("Please enter the 10 digit phone number: ")
-        try:
-            if validate_phone(phone_entry):
-                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use and clears any additional symbols.
-            else:
-                print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
-                break
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        if not validate_phone(phone_entry):
             break
+        else:
+            phone = validate_phone(phone_entry)
         if phone in contact_list:
             confirmation = input(f"Are you sure you want to delete the contact for {contact_list[phone]["name"]}? (yes/no):\n").lower()
             if confirmation == "yes":
@@ -110,15 +99,10 @@ def delete_contact(contact_list):
 def search_contact(contact_list):
     while True:
         phone_entry = input("Please enter the 10 digit phone number: ")
-        try:
-            if validate_phone(phone_entry):
-                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use
-            else:
-                print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
-                break
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        if not validate_phone(phone_entry):
             break
+        else:
+            phone = validate_phone(phone_entry)
         if phone in contact_list:
             print(f"Name: {contact_list[phone]["name"]}\nPhone: {contact_list[phone]["phone"]}\nEmail Address: {contact_list[phone]["email"]}\nAddress: {contact_list[phone]["address"]}")
         else:
@@ -143,7 +127,7 @@ def import_contacts():
         with open(file_to_import, "r") as file:
             for line in file:
                 try:
-                    new_phone = re.search(r"\d{10}", line.strip())
+                    new_phone = re.search(r"\d{10}$", line.strip())
                     if new_phone.group() in new_contact_list.keys():   # .group brings out the phone number.
                         if re.search(rf"{new_phone.group()} Name:", line.strip()):
                             new_contact_list[new_phone.group()]["name"] = line[17:-1]
@@ -151,7 +135,7 @@ def import_contacts():
                             new_email = re.search(r"[a-zA-Z0-9.-_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", line).group()
                             new_contact_list[new_phone.group()]["email"] = new_email
                         if re.search(rf"{new_phone.group()} Address:", line.strip()):
-                            new_contact_list[new_phone.group()]["address"] = line[19:-1]
+                            new_contact_list[new_phone.group()]["address"] = line[20:-1]
                     else: 
                         new_contact_list[new_phone.group()] = {"name": "", "phone": new_phone.group(), "email": "", "address": ""}
                 except:
@@ -176,10 +160,10 @@ def validate_phone(phone_entry):
         if char.isnumeric():
             phone_list.append(char)
     phone = "".join(phone_list)
-    pattern = r"\d{10}"
-    if re.match(pattern, phone):
-        return True, phone
+    if re.match(r"\d{10}$", phone):
+        return phone
     else:
+        print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
         return False
 
 contact_list = {"9999999999": {"name": "John Doe", "phone": "9999999999", "email": "johndoe@email.com", "address": "789 No Way Dr. Portland, OR 88999"}
