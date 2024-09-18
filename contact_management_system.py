@@ -149,8 +149,7 @@ def validate_phone(phone_entry):
         return False
 
 contact_list = {
-    "9999999999": {"name": "John Smith", "phone": "9999999999", "email": "email@email.com", "address": "123 main dr. Denver, CO 80221"},
-    "7202755650": {"name": "Josh Harris", "phone": "7202755650", "email": "joshua.harris07@gmail.com", "address": "10570 Adams Cir Northglenn, CO 80233"},
+    "9999999999": {"name": "John Smith", "phone": "9999999999", "email": "email@email.com", "address": "123 main dr. Denver, CO 80221"}
 }
 
 print("Welcome to the Contact Managements System!")
