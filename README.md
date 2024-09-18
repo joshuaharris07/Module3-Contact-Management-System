@@ -6,18 +6,10 @@ The system can also export the current list of contacts to a text file, and can 
 
 Directions for importing:
 Save a text file to the current working directory.
-The text file must have the following layout in order for the script to pull the contact information correctly, where ########## is the 10 digit phone number for the contact:
+The text file must have the following layout in order for the script to pull the contact information correctly, where ########## is the 10 digit phone number for the contact. Please ensure there are no spaces before or after the "|":
 
-##########
-########## Name: enter name
-########## Email address: enter email
-########## Address: enter address
+##########|enter name|enter email|enter address
+##########|enter name|enter email|enter address
 
-##########
-########## Name: enter name
-########## Email address: enter email
-########## Address: enter address
-
-Be sure to have an empty line after every contact in the text file, including the last one.
 
 Link to GitHub Repository: https://github.com/joshuaharris07/Module3-Contact-Management-System.git

@@ -1,5 +1,0 @@
-
-9999999999
-9999999999 Name: John Doe
-9999999999 Email address: johndoe@email.com
-9999999999 Address: 789 No Way Dr. Portland, OR 88999

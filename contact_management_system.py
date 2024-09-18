@@ -117,35 +117,20 @@ def display_contacts(contact_list):
 def export_contacts(contact_list):
     with open("my_contact_list.txt", "w") as file:
         for contact in contact_list.values():
-            file.write(f"\n{contact["phone"]}\n{contact["phone"]} Name: {contact["name"]}\n{contact["phone"]} Email address: {contact["email"]}\n{contact["phone"]} Address: {contact["address"]}\n")
+            file.write(f"{contact["phone"]}|{contact["name"]}|{contact["email"]}|{contact["address"]}\n")
     print("Contacts were successfully exported to my_contact_list.txt\nReturning to the menu.")
 
 def import_contacts():
-    new_contact_list = {}
     file_to_import = input("Please enter the file name of the contacts you wish to import. Please make sure the file is in your current working directory:\n")
-    try: 
-        with open(file_to_import, "r") as file:
-            for line in file:
-                try:
-                    new_phone = re.search(r"\d{10}$", line.strip())
-                    if new_phone.group() in new_contact_list.keys():   # .group brings out the phone number.
-                        if re.search(rf"{new_phone.group()} Name:", line.strip()):
-                            new_contact_list[new_phone.group()]["name"] = line[17:-1]
-                        if re.search(rf"{new_phone.group()} Email address:", line.strip()):
-                            new_email = re.search(r"[a-zA-Z0-9.-_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", line).group()
-                            new_contact_list[new_phone.group()]["email"] = new_email
-                        if re.search(rf"{new_phone.group()} Address:", line.strip()):
-                            new_contact_list[new_phone.group()]["address"] = line[20:-1]
-                    else: 
-                        new_contact_list[new_phone.group()] = {"name": "", "phone": new_phone.group(), "email": "", "address": ""}
-                except:
-                    pass   # leaving pass to completely skip empty lines
-        contact_list.update(new_contact_list)
-        print("Contacts have successfully been imported.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    finally:
-        print("Returning to the menu.")
+    with open(file_to_import, "r") as file:
+        for line in file:
+            try: 
+                phone, name, email, address = line.strip().split("|")
+                new_contact = {phone: {"name": name, "phone": phone, "email": email, "address": address}}
+                contact_list.update(new_contact)
+            except Exception as e:
+                print(f"There was an error: {e}")
+    print("Contacts have successfully been imported.")
 
 def validate_email(email):
     pattern = r"^[a-zA-Z0-9.-_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
