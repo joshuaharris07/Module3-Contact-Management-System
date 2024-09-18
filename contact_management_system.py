@@ -75,33 +75,56 @@ def edit_contact(contact_list):
         else:
             print("That is not a valid selection.")
 
-def delete_contact():
-    pass
-    # Which contact do you want to delete? Please enter their name: 
-    # Display all contact info, is this the contact you wish to delete? (yes/no)
-    # if confirmation == "yes":
-    # delete contact
+def delete_contact(contact_list):
+    while True:
+        phone_entry = input("Please enter the 10 digit phone number: ")
+        try:
+            if validate_phone(phone_entry):
+                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use
+            else:
+                print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
+                break
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            break
+        if phone in contact_list:
+            confirmation = input(f"Are you sure you want to delete the contact for {contact_list[phone]["name"]}? (yes/no):\n").lower()
+            if confirmation == "yes":
+                del contact_list[phone]
+                print("That contact has successfully been deleted. Returning to the menu.")
+                break
+        else:
+            print(f"That phone number is not currently in your contacts. Returning to the menu.")
+            break
 
-def search_contact():
-    search_option = input("Would you like to search by:\n1. Name\n2. Phone number\n3. Email address\n4. Address\n")
-    if search_option == "1":
-        pass
-    elif search_option == "2":
-        pass
-    elif search_option == "3":
-        pass
-    elif search_option == "4":
-        pass
-    else:
-        print("That is not a valid selection, returning to the menu.")
+def search_contact(contact_list):
+    while True:
+        phone_entry = input("Please enter the 10 digit phone number: ")
+        try:
+            if validate_phone(phone_entry):
+                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use
+            else:
+                print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
+                break
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            break
+        if phone in contact_list:
+            print(f"Name: {contact_list[phone]["name"]}\nPhone: {contact_list[phone]["phone"]}\nEmail Address: {contact_list[phone]["email"]}\nAddress: {contact_list[phone]["address"]}")
+        else:
+            print("That contact was not found.")
+        print("Returning to the menu.")
+        break
 
 def display_contacts(contact_list):
-    for contact in contact_list: # (might need.values())
-        for name, phone, email, address in contact.values():
-            print(f"Name: {name}, Phone number: {phone}, Email address: {email}, Address: {address}")
+    for contact in contact_list.values():
+        print(f"Name: {contact["name"]}, Phone number: {contact["phone"]}, Email address: {contact["email"]}, Address: {contact["address"]}")
 
-def export_contacts():
-    pass
+def export_contacts(contact_list):
+    with open("my_contact_list.txt", "w") as file:
+        for contact in contact_list.values():
+            file.write(f"\nName: {contact["name"]}\nPhone number: {contact["phone"]}\nEmail address: {contact["email"]}\nAddress: {contact["address"]}\n")
+        
 
 def import_contacts():
     pass
@@ -148,16 +171,17 @@ while True:
     elif menu_action == "2":
         edit_contact(contact_list)
     elif menu_action == "3":
-        delete_contact()
+        delete_contact(contact_list)
     elif menu_action == "4":
-        search_contact()
+        search_contact(contact_list)
     elif menu_action == "5":
-        display_contacts()
+        display_contacts(contact_list)
     elif menu_action == "6":
-        export_contacts()
+        export_contacts(contact_list)
     elif menu_action == "7":
         import_contacts()
     elif menu_action == "8":
+        print("Thank you for using the Contact Management System, have a good day!")
         break
     else:
         print("Please enter a number to select an option.")

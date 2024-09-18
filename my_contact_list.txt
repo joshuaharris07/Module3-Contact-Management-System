@@ -1,0 +1,10 @@
+
+Name: John Smith
+Phone number: 9999999999
+Email address: email@email.com
+Address: 123 main dr. Denver, CO 80221
+
+Name: Josh Harris
+Phone number: 7202755650
+Email address: joshua.harris07@gmail.com
+Address: 10570 Adams Cir Northglenn, CO 80233
