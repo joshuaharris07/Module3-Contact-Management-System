@@ -20,7 +20,7 @@ def add_contact(contact_list):
         email = input("Please enter their email address: ")
         try:
             if validate_email(email):
-                print("Thank you.")
+                pass   # leaving pass as nothing needs to be done other than the validation.
             else:
                 print(f"{email} is not a valid email. Returning to the menu.")
                 break
@@ -28,14 +28,13 @@ def add_contact(contact_list):
             print(f"An error occurred: {e}")
             break
         address = input("Please enter their full address: ")
-        contact_to_add = {"Name": name, "Phone": phone, "Email": email, "Address": address}
-        print(contact_to_add) # will remove before finalizing
+        contact_to_add = {"name": name, "phone": phone, "email": email, "address": address}
         try: 
             contact_list[phone] = contact_to_add
         except:
             print("An error occurred adding that contact. Returning to the menu.")
         else: 
-            print(f"Contact has been successfully added. Returning to the menu.")
+            print(f"Contact information for {name} has been successfully added. Returning to the menu.")
         finally:
             break
 
@@ -44,7 +43,7 @@ def edit_contact(contact_list):
         phone_entry = input("Please enter the 10 digit phone number: ")
         try:
             if validate_phone(phone_entry):
-                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use
+                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use and clear additional symbols.
             else:
                 print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
                 break
@@ -54,7 +53,7 @@ def edit_contact(contact_list):
         if phone not in contact_list:
                 print(f"That phone number is not currently in your contacts. Returning to the menu.")
                 break
-        action = input("What would you like to edit?\n1. Name\n2. Email Address\n 3. Address\n4. Delete the contact\n")
+        action = input("What would you like to edit?\n1. Name\n2. Email Address\n3. Address\n4. Delete the contact\n")
         if action == "1":
             name_change = input("Please enter the new name: ")
             contact_list[phone]["name"] = name_change
@@ -62,9 +61,17 @@ def edit_contact(contact_list):
             break
         elif action == "2":
             email_change = input("Please enter the new email address: ")
-            contact_list[phone]["email"] = email_change
-            print(f"The email address has successfully been changed to: {email_change}\nReturning to the menu.")
-            break
+            try:
+                if validate_email(email_change):
+                    contact_list[phone]["email"] = email_change
+                    print(f"The email address has successfully been changed to: {email_change}\nReturning to the menu.")
+                    break
+                else:
+                    print(f"{email_change} is not a valid email. Returning to the menu.")
+                    break
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                break
         elif action == "3":
             address_change = input("Please enter the new address: ")
             contact_list[phone]["address"] = address_change
@@ -80,7 +87,7 @@ def delete_contact(contact_list):
         phone_entry = input("Please enter the 10 digit phone number: ")
         try:
             if validate_phone(phone_entry):
-                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use
+                valid, phone = validate_phone(phone_entry)   # Pulls the phone number out of the function for use and clears any additional symbols.
             else:
                 print(f"{phone_entry} is not a valid phone number. Returning to the menu.")
                 break
@@ -92,6 +99,9 @@ def delete_contact(contact_list):
             if confirmation == "yes":
                 del contact_list[phone]
                 print("That contact has successfully been deleted. Returning to the menu.")
+                break
+            else:
+                print(f"Contact deletion cancelled.\nReturning to the menu.")
                 break
         else:
             print(f"That phone number is not currently in your contacts. Returning to the menu.")
@@ -123,11 +133,35 @@ def display_contacts(contact_list):
 def export_contacts(contact_list):
     with open("my_contact_list.txt", "w") as file:
         for contact in contact_list.values():
-            file.write(f"\nName: {contact["name"]}\nPhone number: {contact["phone"]}\nEmail address: {contact["email"]}\nAddress: {contact["address"]}\n")
-        
+            file.write(f"\n{contact["phone"]}\n{contact["phone"]} Name: {contact["name"]}\n{contact["phone"]} Email address: {contact["email"]}\n{contact["phone"]} Address: {contact["address"]}\n")
+    print("Contacts were successfully exported to my_contact_list.txt\nReturning to the menu.")
 
 def import_contacts():
-    pass
+    new_contact_list = {}
+    file_to_import = input("Please enter the file name of the contacts you wish to import. Please make sure the file is in your current working directory:\n")
+    try: 
+        with open(file_to_import, "r") as file:
+            for line in file:
+                try:
+                    new_phone = re.search(r"\d{10}", line.strip())
+                    if new_phone.group() in new_contact_list.keys():   # .group brings out the phone number.
+                        if re.search(rf"{new_phone.group()} Name:", line.strip()):
+                            new_contact_list[new_phone.group()]["name"] = line[17:-1]
+                        if re.search(rf"{new_phone.group()} Email address:", line.strip()):
+                            new_email = re.search(r"[a-zA-Z0-9.-_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", line).group()
+                            new_contact_list[new_phone.group()]["email"] = new_email
+                        if re.search(rf"{new_phone.group()} Address:", line.strip()):
+                            new_contact_list[new_phone.group()]["address"] = line[19:-1]
+                    else: 
+                        new_contact_list[new_phone.group()] = {"name": "", "phone": new_phone.group(), "email": "", "address": ""}
+                except:
+                    pass   # leaving pass to completely skip empty lines
+        contact_list.update(new_contact_list)
+        print("Contacts have successfully been imported.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        print("Returning to the menu.")
 
 def validate_email(email):
     pattern = r"^[a-zA-Z0-9.-_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -148,9 +182,8 @@ def validate_phone(phone_entry):
     else:
         return False
 
-contact_list = {
-    "9999999999": {"name": "John Smith", "phone": "9999999999", "email": "email@email.com", "address": "123 main dr. Denver, CO 80221"}
-}
+contact_list = {"9999999999": {"name": "John Doe", "phone": "9999999999", "email": "johndoe@email.com", "address": "789 No Way Dr. Portland, OR 88999"}
+    }   # leaving one contact in the list for example purposes.
 
 print("Welcome to the Contact Managements System!")
 while True:

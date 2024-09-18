@@ -1,5 +1,3 @@
 
-Name: John Smith
-Phone number: 9999999999
-Email address: email@email.com
-Address: 123 main dr. Denver, CO 80221
+
+
